@@ -60,10 +60,12 @@ void UGrabber::Grab()
 
 	if (HasHit)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Hit!!!"));
+		//UE_LOG(LogTemp, Display, TEXT("Hit!!!"));
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10, 10, FColor::Green, false, 5.f);
 		Rotation = HitResult.GetActor()->GetActorRotation();
 		PhysicsHandle->GrabComponentAtLocationWithRotation(HitResult.GetComponent(), NAME_None, HitResult.ImpactPoint, Rotation);
+
+		HitResult.GetActor()->Tags.Add("Grabbed");
 		Grabbing = true;
 	}
 	else
@@ -74,10 +76,13 @@ void UGrabber::Grab()
 
 void UGrabber::Release()
 {
-	if (!PhysicsHandle) return;
+	if (!PhysicsHandle || !PhysicsHandle->GetGrabbedComponent()) return;
+
+	PhysicsHandle->GetGrabbedComponent()->GetOwner()->Tags.Remove("Grabbed");
 	PhysicsHandle->ReleaseComponent();
+
 	Grabbing = false;
-	UE_LOG(LogTemp, Display, TEXT("Released"));
+
 }
 
 void UGrabber::SetSpringArmComponent()

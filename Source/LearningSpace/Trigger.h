@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/BoxComponent.h"
+#include "Mover.h"
 #include "Trigger.generated.h"
 
 /**
@@ -23,13 +24,25 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
-	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UFUNCTION(BlueprintCallable)
+	void SetMover(UMover* NewMover);
+	
 
 private:
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	AActor* FindAcceptableActor(TArray<AActor*> Actors) const;
+
+
+	UPROPERTY(EditAnywhere, Category = "Tag")
+	FName AcceptableTag;
+	UMover* Mover;
 	
 };
